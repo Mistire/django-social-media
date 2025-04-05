@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 CustomUser = get_user_model()
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
     

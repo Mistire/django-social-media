@@ -27,7 +27,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Your API Title",
+        title="Django Social Media",
         default_version='v1',
         description="API documentation for the project",
         terms_of_service="https://www.google.com/policies/terms/",
