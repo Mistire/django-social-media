@@ -1,22 +1,24 @@
-from .models import CustomUser
+from .models import CustomUser, Profile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.tokens import RefreshToken
+
 
 CustomUser = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
-    
+
     class Meta:
         model = CustomUser
         fields = ["email", "username", "password"]
 
     def validate_email(self, value):
         if CustomUser.objects.filter(email=value).exists():
-            raise serializers.ValidationError("A user with this email already exists.")
+            raise serializers.ValidationError(
+                "A user with this email already exists.")
         return value
 
     def validate_password(self, value):
@@ -25,11 +27,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop("password")
-        user = CustomUser.objects.create_user(password=password, **validated_data)
+        user = CustomUser.objects.create_user(
+            password=password, **validated_data)
         return user
-    
+
+
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField() # Use email for authentication
+    email = serializers.EmailField()  # Use email for authentication
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
@@ -37,13 +41,16 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password', '')
 
         if email and password:
-            user = authenticate(email=email, password=password) # Use email for authentication
+            # Use email for authentication
+            user = authenticate(email=email, password=password)
             if user:
                 return user
             else:
                 raise serializers.ValidationError('Invalid credentials')
         else:
-            raise serializers.ValidationError('Must include "email" and "password".')
+            raise serializers.ValidationError(
+                'Must include "email" and "password".')
+
 
 class TokenObtainPairSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -64,5 +71,14 @@ class TokenObtainPairSerializer(serializers.Serializer):
             else:
                 raise serializers.ValidationError('Invalid credentials')
         else:
-            raise serializers.ValidationError('Must include "email" and "password".')
-        
+            raise serializers.ValidationError(
+                'Must include "email" and "password".')
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source='user.email', read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'username', 'email', 'bio', 'avatar']
