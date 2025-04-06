@@ -1,4 +1,4 @@
-from .models import CustomUser
+from .models import CustomUser, Profile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -66,3 +66,12 @@ class TokenObtainPairSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError('Must include "email" and "password".')
         
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = ['id', 'username', 'email', 'bio', 'avatar']
