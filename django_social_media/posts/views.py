@@ -1,12 +1,22 @@
+
 from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, generics, permissions
 from .models import Post
 from .serializers import PostSerializer
 
-class PostViewSet(viewsets.ModelViewSet):
+
+class PostCreateView(generics.CreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class PostListView(generics.RetrieveAPIView):
     queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
@@ -34,3 +44,4 @@ class PostViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_200_OK)
+
