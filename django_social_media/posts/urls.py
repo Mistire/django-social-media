@@ -9,3 +9,4 @@ urlpatterns = [
     path('', include(router.urls)),
     path('posts/<int:post_pk>/comment/', CommentViewSet.as_view({'post': 'create'}), name='post-comment'),
 ]
+

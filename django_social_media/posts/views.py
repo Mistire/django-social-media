@@ -1,15 +1,18 @@
 
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import generics, permissions
+from django.contrib.auth import get_user_model
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404
 
 
+CustomUser = get_user_model()
 #class PostCreateView(generics.CreateAPIView):
 #    queryset = Post.objects.all()
 #    serializer_class = PostSerializer

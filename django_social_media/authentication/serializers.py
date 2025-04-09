@@ -1,4 +1,4 @@
-from .models import CustomUser, Profile
+from .models import CustomUser, Follow, Profile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
@@ -75,3 +75,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'username', 'email', 'bio']
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = ['id', 'follower', 'following', 'created_at']
+        read_only_fields = ['follower', 'created_at']
+    
+    def validate(self, data):
+        if data['following'] == self.context['request'].user:
+            raise serializers.ValidationError("You cannot follow yourself.")
+        return data
