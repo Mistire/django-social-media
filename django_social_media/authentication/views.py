@@ -107,18 +107,19 @@ class FollowUserView(APIView):
 
         if request.user == following_user:
             return Response(
-                {"error": "You are already following this user."},
+                {"error": "You cannot follow yourself"},  
                 status=status.HTTP_400_BAD_REQUEST
-                )
+            )
+        
         if Follow.objects.filter(follower=request.user, following=following_user).exists():
             return Response(
-                {"error": "You are already following this user."},
+                {"error": "You are already following this user"},
                 status=status.HTTP_400_BAD_REQUEST
-                )
-        follow = Follow.objects.create(follower = request.user, following = following_user)
-
-        serializer = FollowSerializer(follow, context= {'request': request})
-
+            )
+            
+        follow = Follow.objects.create(follower=request.user, following=following_user)
+        serializer = FollowSerializer(follow, context={'request': request})
+        
         return Response(
             {"message": f"You are now following {following_user.username}"},
             status=status.HTTP_201_CREATED
@@ -145,3 +146,21 @@ class UnfollowUserView(APIView):
                 {"error": "You are not following this user."},
                 status=status.HTTP_400_BAD_REQUEST
                 )
+
+class FollowersListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        user = get_object_or_404(CustomUser, id=user_id)
+        followers = CustomUser.objects.filter(following__following=user)
+        serializer = ProfileSerializer(followers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FollowingListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        user = get_object_or_404(CustomUser, id=user_id)
+        following = CustomUser.objects.filter(followers__follower=user)
+        serializer = ProfileSerializer(following, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
