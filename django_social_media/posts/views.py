@@ -1,14 +1,16 @@
 
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import generics, permissions
-from .models import Post
-from .serializers import PostSerializer
+from django.contrib.auth import get_user_model
+from .models import  Post
+from .serializers import  PostSerializer
 
-
+CustomUser = get_user_model()
 #class PostCreateView(generics.CreateAPIView):
 #    queryset = Post.objects.all()
 #    serializer_class = PostSerializer
@@ -45,4 +47,3 @@ class PostListView(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_200_OK)
-

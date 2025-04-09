@@ -7,4 +7,4 @@ router.register(r'posts', PostListView, basename='post')
 
 urlpatterns = [
     path('', include(router.urls)),
-]
+    ]
