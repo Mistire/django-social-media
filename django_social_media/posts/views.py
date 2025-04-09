@@ -5,8 +5,9 @@ from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import generics, permissions
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
+from django.shortcuts import get_object_or_404
 
 
 #class PostCreateView(generics.CreateAPIView):
@@ -45,4 +46,16 @@ class PostListView(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_200_OK)
+
+class CommentViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+
+    def create(self, request, post_pk=None):
+        post = get_object_or_404(Post, id=post_pk)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, post=post)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
