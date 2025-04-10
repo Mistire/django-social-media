@@ -4,11 +4,11 @@ from .views import LikeViewSet, PostListView, CommentViewSet, PostDetailView
 
 
 router = DefaultRouter()
-router.register(r'posts', PostListView, basename='post')
+router.register(r'', PostListView, basename='post')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('posts/<int:post_pk>/like/', LikeViewSet.as_view({'post': 'create'}), name='post-like'),
-    path('posts/<int:post_pk>/comment/', CommentViewSet.as_view({'post': 'create'}), name='post-comment'),
-    path('api/posts/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('<int:post_pk>/like/', LikeViewSet.as_view({'post': 'create'}), name='post-like'),
+    path('<int:post_pk>/comment/', CommentViewSet.as_view({'post': 'create'}), name='post-comment'),
+    path('<int:pk>/', PostDetailView.as_view(), name='post-detail'),
 ]

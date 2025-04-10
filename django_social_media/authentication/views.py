@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from posts.serializers import PostSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,6 +9,7 @@ from drf_yasg import openapi
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from .models import Follow, Profile
+from posts.models import Post
 from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()
@@ -96,9 +98,6 @@ class ProfileRetrieveUpdateView(APIView):
             return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
-
-
-
 class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -164,3 +163,14 @@ class FollowingListView(APIView):
         following = CustomUser.objects.filter(followers__follower=user)
         serializer = ProfileSerializer(following, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        followed_users = request.user.following.values_list('following_id', flat=True)
+        posts = Post.objects.filter(user__in=followed_users).order_by('-created_at')
+
+        serializers = PostSerializer(posts, many=True, context={'request': request})
+        return Response(serializers.data, status=status.HTTP_200_OK)
