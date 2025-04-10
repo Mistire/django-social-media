@@ -13,13 +13,7 @@ from .serializers import PostSerializer, CommentSerializer
 
 
 CustomUser = get_user_model()
-#class PostCreateView(generics.CreateAPIView):
-#    queryset = Post.objects.all()
-#    serializer_class = PostSerializer
-#    permission_classes = [permissions.IsAuthenticated]
 
-#    def perform_create(self, serializer):
-#        serializer.save(user=self.request.user)
 
 class PostListView(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -53,6 +47,11 @@ class PostListView(viewsets.ModelViewSet):
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_200_OK)
 
 
+class PostDetailView(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
 class LikeViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -83,4 +82,4 @@ class CommentViewSet(viewsets.ViewSet):
             serializer.save(user=request.user, post=post)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
+
