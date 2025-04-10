@@ -53,6 +53,12 @@ class PostListView(viewsets.ModelViewSet):
         return Response({"message": "Post deleted successfully"}, status=status.HTTP_200_OK)
 
 
+class PostDetailView(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'id'  # use 'id' instead of 'pk' in the URL
+
+
 class LikeViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -83,4 +89,4 @@ class CommentViewSet(viewsets.ViewSet):
             serializer.save(user=request.user, post=post)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
+
