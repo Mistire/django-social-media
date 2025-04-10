@@ -13,13 +13,7 @@ from .serializers import PostSerializer, CommentSerializer
 
 
 CustomUser = get_user_model()
-#class PostCreateView(generics.CreateAPIView):
-#    queryset = Post.objects.all()
-#    serializer_class = PostSerializer
-#    permission_classes = [permissions.IsAuthenticated]
 
-#    def perform_create(self, serializer):
-#        serializer.save(user=self.request.user)
 
 class PostListView(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -56,7 +50,6 @@ class PostListView(viewsets.ModelViewSet):
 class PostDetailView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    lookup_field = 'id'  # use 'id' instead of 'pk' in the URL
 
 
 class LikeViewSet(viewsets.ViewSet):

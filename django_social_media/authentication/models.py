@@ -10,6 +10,7 @@ class CustomUserManager(BaseUserManager):
     user = self.model(email=email, username=username, **extra_fields)
     user.set_password(password)
     user.save(using=self._db)
+    date_joined = models.DateTimeField(auto_now_add=True)
     return user
   
   def create_superuser(self, email, username, password=None, **extra_fields):

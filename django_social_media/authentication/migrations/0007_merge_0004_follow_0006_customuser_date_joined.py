@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('authentication', '0004_follow'),
-        ('authentication', '0006_customuser_date_joined'),
+        # ('authentication', '0006_customuser_date_joined'),
     ]
 
     operations = [
