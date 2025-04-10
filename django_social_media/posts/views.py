@@ -6,11 +6,14 @@ from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import generics, permissions
-from .models import Like, Post
-from .serializers import PostSerializer
+from django.contrib.auth import get_user_model
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer
 
 
-# class PostCreateView(generics.CreateAPIView):
+
+CustomUser = get_user_model()
+#class PostCreateView(generics.CreateAPIView):
 #    queryset = Post.objects.all()
 #    serializer_class = PostSerializer
 #    permission_classes = [permissions.IsAuthenticated]
@@ -68,3 +71,16 @@ class LikeViewSet(viewsets.ViewSet):
             "message": message,
             "like_count": post.likes.count()
         }, status=status.HTTP_200_OK)
+
+class CommentViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+
+    def create(self, request, post_pk=None):
+        post = get_object_or_404(Post, id=post_pk)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, post=post)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 

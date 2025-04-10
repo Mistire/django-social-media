@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
 
-# Create your models here.
 class CustomUserManager(BaseUserManager):
   def create_user(self, email, username, password=None, **extra_fields):
     if not email:
@@ -22,7 +22,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
   username = models.CharField(max_length=255, unique=True)
   is_staff = models.BooleanField(default=False)
   is_active = models.BooleanField(default=True)
-
+  date_joined = models.DateTimeField(default=timezone.now)
+  
   objects = CustomUserManager()
 
   USERNAME_FIELD = "email"
@@ -39,3 +40,16 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
+
+class Follow(models.Model):
+    follower = models.ForeignKey(CustomUser, related_name="following", on_delete=models.CASCADE)
+    following = models.ForeignKey(CustomUser, related_name="followers", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("follower", "following")
+        ordering = ["-created_at"]
+
+    
+    def __str__(self):
+        return f"{self.follower} follows {self.following}"
