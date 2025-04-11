@@ -1,0 +1,22 @@
+databases:
+  - name: django_social_mediadb
+    plan: free
+    databaseName: django_social_media
+    user: django_social_media
+
+services:
+  - type: web
+    plan: free
+    name: django_social_media
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn django_social_media.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: django_social_mediadb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
