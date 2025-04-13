@@ -23,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i=#gzvda!_-^b_gd4sw&^)h4d41j=im1-x(d0xiuw1#iztdu-3'
+SECRET_KEY = os.getenv('SECRET_KEY')
+# 'django-insecure-i=#gzvda!_-^b_gd4sw&^)h4d41j=im1-x(d0xiuw1#iztdu-3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -109,7 +110,7 @@ WSGI_APPLICATION = 'django_social_media.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost:5432/django_social_media',
+        default=os.getenv('DATABASE_URL'),
         conn_max_age=600
     )
 }
