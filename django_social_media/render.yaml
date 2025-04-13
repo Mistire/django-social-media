@@ -2,7 +2,7 @@ databases:
   - name: django_social_mediadb
     plan: free
     databaseName: django_social_media
-    user: django_social_media
+    user: django_social_mediadb_user
 
 services:
   - type: web
