@@ -109,7 +109,7 @@ WSGI_APPLICATION = 'django_social_media.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost:5432/django_social_media',
+        default='postgresql://django_social_mediadb_user:u0bkd4uOYk6e8lRoLrncNpHcPPBdahUu@dpg-cvtsvdngi27c73aaeaf0-a.oregon-postgres.render.com/django_social_mediadb',
         conn_max_age=600
     )
 }
